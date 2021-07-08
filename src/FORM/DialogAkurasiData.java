@@ -2,21 +2,22 @@ package FORM;
 
 public class DialogAkurasiData extends javax.swing.JDialog {
     
-    private int[] COUNT;
+    private int[] COUNT_PREDICT, COUNT_KALIMAT;
     
     public DialogAkurasiData(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
     
-    public DialogAkurasiData(java.awt.Frame parent, boolean modal, int[] COUNT) {
+    public DialogAkurasiData(java.awt.Frame parent, boolean modal, int[] COUNT_PREDICT, int[] COUNT_KALIMAT) {
         super(parent, modal);
         initComponents();
         
-        this.COUNT = COUNT;
+        this.COUNT_PREDICT = COUNT_PREDICT;
+        this.COUNT_KALIMAT = COUNT_KALIMAT;
     }
 
-        
+    
     
     
     @SuppressWarnings("unchecked")

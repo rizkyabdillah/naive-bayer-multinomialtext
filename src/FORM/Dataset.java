@@ -43,25 +43,17 @@ public class Dataset extends javax.swing.JFrame {
     private int getSelectedFilter() {
         return filterKategori.getSelectedIndex();
     }
-    
+
     private FrekuensiModel getFrekuensiModel(List<FrekuensiModel> model, String key) {
         int index = 0;
-        for(int i = 0; i < model.size(); i++) {
-            if(model.get(i).getKata().equals(key)) {
+        for (int i = 0; i < model.size(); i++) {
+            if (model.get(i).getKata().equals(key)) {
                 index = i;
             }
         }
-        
+
         return model.get(index);
     }
-
-    
-    
-    
-    
-    
-    
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -382,7 +374,7 @@ public class Dataset extends javax.swing.JFrame {
             final List<String> WORD_SEDIH = new ArrayList<>();
             final List<String> WORD_SENSITIF = new ArrayList<>();
             final List<String> WORD_LELAH = new ArrayList<>();
-            
+
             final List<FrekuensiModel> FREKUENSI = new ArrayList<>();
 
             while (RS.next()) {
@@ -404,22 +396,22 @@ public class Dataset extends javax.swing.JFrame {
                         break;
                 }
             }
-            
+
             // Eliminasi kata yang sama
             word = word.stream().distinct().collect(Collectors.toList());
 
-            for(String value : word) {
+            for (String value : word) {
                 FREKUENSI.add(
-                    new FrekuensiModel(
-                        value,
-                        Collections.frequency(WORD_DEPRESI, value),
-                        Collections.frequency(WORD_SEDIH, value),
-                        Collections.frequency(WORD_SENSITIF, value),
-                        Collections.frequency(WORD_LELAH, value)
-                    )
+                        new FrekuensiModel(
+                                value,
+                                Collections.frequency(WORD_DEPRESI, value),
+                                Collections.frequency(WORD_SEDIH, value),
+                                Collections.frequency(WORD_SENSITIF, value),
+                                Collections.frequency(WORD_LELAH, value)
+                        )
                 );
             }
-            
+
             new DialogFrekuensiKata1(this, true, "Frekuensi Kata", FREKUENSI).setVisible(true);
         } catch (SQLException ex) {
             MSG.msgError("Error Frekuensi Data!");
@@ -431,21 +423,21 @@ public class Dataset extends javax.swing.JFrame {
             final ResultSet RS = CON.selectAll("DATASET");
             List<String> word = new ArrayList<>();
             final List<String> KALIMAT = new ArrayList<>();
-            
+
             final List<String> WORD_DEPRESI = new ArrayList<>();
             final List<String> WORD_SEDIH = new ArrayList<>();
             final List<String> WORD_SENSITIF = new ArrayList<>();
             final List<String> WORD_LELAH = new ArrayList<>();
-            
+
             final List<FrekuensiModel> FREKUENSI = new ArrayList<>();
             final List<PrediksiModel> PREDIKSI = new ArrayList<>();
-            
+
             int count_depresi = 0, count_sedih = 0, count_sensitif = 0, count_lelah = 0;
 
             while (RS.next()) {
                 final String _KALIMAT = RS.getString("kalimat");
                 KALIMAT.add(_KALIMAT);
-                
+
                 final String[] TEMP = _KALIMAT.split(" ");
                 Collections.addAll(word, TEMP);
 
@@ -468,80 +460,76 @@ public class Dataset extends javax.swing.JFrame {
                         break;
                 }
             }
-            
+
             // Eliminasi kata yang sama
             word = word.stream().distinct().collect(Collectors.toList());
-            
-            
-            
-            for(String value : word) {
-                
+
+            for (String value : word) {
+
                 final double FREKUENSI_DEPRESI = Collections.frequency(WORD_DEPRESI, value);
                 final double FREKUENSI_SEDIH = Collections.frequency(WORD_SEDIH, value);
                 final double FREKUENSI_SENSITIF = Collections.frequency(WORD_SENSITIF, value);
                 final double FREKUENSI_LELAH = Collections.frequency(WORD_LELAH, value);
-                        
+
                 FREKUENSI.add(
-                    new FrekuensiModel(
-                        value,
-                        FREKUENSI_DEPRESI,
-                        FREKUENSI_SEDIH,
-                        FREKUENSI_SENSITIF,
-                        FREKUENSI_LELAH,
-                            
-                        (FREKUENSI_DEPRESI + 1) / (word.size() + Math.abs(WORD_DEPRESI.size())) ,
-                        (FREKUENSI_SEDIH + 1) / (word.size() + Math.abs(WORD_SEDIH.size())) ,
-                        (FREKUENSI_SENSITIF + 1) / (word.size() + Math.abs(WORD_SENSITIF.size())) ,
-                        (FREKUENSI_LELAH + 1) / (word.size() + Math.abs(WORD_LELAH.size()))
-                    )
+                        new FrekuensiModel(
+                                value,
+                                FREKUENSI_DEPRESI,
+                                FREKUENSI_SEDIH,
+                                FREKUENSI_SENSITIF,
+                                FREKUENSI_LELAH,
+                                (FREKUENSI_DEPRESI + 1) / (word.size() + Math.abs(WORD_DEPRESI.size())),
+                                (FREKUENSI_SEDIH + 1) / (word.size() + Math.abs(WORD_SEDIH.size())),
+                                (FREKUENSI_SENSITIF + 1) / (word.size() + Math.abs(WORD_SENSITIF.size())),
+                                (FREKUENSI_LELAH + 1) / (word.size() + Math.abs(WORD_LELAH.size()))
+                        )
                 );
             }
-            
-            
-            final int[] COUNT= new int[4];
-            
-            for(String value : KALIMAT) {
+
+            final int[] COUNT = new int[4];
+
+            for (String value : KALIMAT) {
                 final String[] KATA = value.split(" ");
-                
+
                 double product_depresi = count_depresi / (double) KALIMAT.size();
                 double product_sedih = count_sedih / (double) KALIMAT.size();
                 double product_sensitif = count_sensitif / (double) KALIMAT.size();
                 double product_lelah = count_lelah / (double) KALIMAT.size();
-                
-                for(String kata : KATA) {
+
+                for (String kata : KATA) {
                     final FrekuensiModel MODEL = getFrekuensiModel(FREKUENSI, kata);
                     product_depresi *= MODEL.getProb_depresi();
                     product_sedih *= MODEL.getProb_sedih();
                     product_sensitif *= MODEL.getProb_sensitif();
                     product_lelah *= MODEL.getProb_lelah();
                 }
-                
+
                 final double SUM_PRODUCT = product_depresi + product_lelah + product_sedih + product_sensitif;
-                
+
                 final double PREDICTED_DEPRESI = product_depresi / SUM_PRODUCT;
-                final double PREDICTED_SEDIH = product_sedih / SUM_PRODUCT; 
-                final double PREDICTED_SENSITIF = product_sensitif / SUM_PRODUCT; 
+                final double PREDICTED_SEDIH = product_sedih / SUM_PRODUCT;
+                final double PREDICTED_SENSITIF = product_sensitif / SUM_PRODUCT;
                 final double PREDICTED_LELAH = product_lelah / SUM_PRODUCT;
-                
+
                 final double MAX = Math.max(Math.max(PREDICTED_DEPRESI, PREDICTED_SEDIH), Math.max(PREDICTED_SENSITIF, PREDICTED_LELAH));
                 String prediction = null;
-                if(PREDICTED_DEPRESI == MAX) {
+                if (PREDICTED_DEPRESI == MAX) {
                     prediction = "DEPRESI";
                     COUNT[0]++;
-                } else if(PREDICTED_SEDIH == MAX) {
+                } else if (PREDICTED_SEDIH == MAX) {
                     prediction = "SEDIH";
                     COUNT[1]++;
-                } else if(PREDICTED_SENSITIF == MAX) {
+                } else if (PREDICTED_SENSITIF == MAX) {
                     prediction = "SENSITIF";
                     COUNT[2]++;
-                } else if(PREDICTED_LELAH == MAX) {
+                } else if (PREDICTED_LELAH == MAX) {
                     prediction = "LELAH";
                     COUNT[3]++;
                 }
-                
+
                 PREDIKSI.add(new PrediksiModel(value, prediction, String.format("%.3f", MAX)));
             }
-            
+
             new DialogPrediksiData(this, true, "Prediksi Data", PREDIKSI, COUNT).setVisible(true);
         } catch (SQLException e) {
             MSG.msgError("Error Prediksi Data : " + e.getMessage());
@@ -553,14 +541,14 @@ public class Dataset extends javax.swing.JFrame {
             final ResultSet RS = CON.selectAll("DATASET");
             List<String> word = new ArrayList<>();
             final List<String> KALIMAT = new ArrayList<>();
-            
+
             final List<String> WORD_DEPRESI = new ArrayList<>();
             final List<String> WORD_SEDIH = new ArrayList<>();
             final List<String> WORD_SENSITIF = new ArrayList<>();
             final List<String> WORD_LELAH = new ArrayList<>();
-            
+
             final List<FrekuensiModel> FREKUENSI = new ArrayList<>();
-            
+
             int count_depresi = 0, count_sedih = 0, count_sensitif = 0, count_lelah = 0;
 
             while (RS.next()) {
@@ -588,44 +576,39 @@ public class Dataset extends javax.swing.JFrame {
                         break;
                 }
             }
-            
+
             // Eliminasi kata yang sama
             word = word.stream().distinct().collect(Collectors.toList());
-            
-            
-            
-            for(String value : word) {
-                
+
+            for (String value : word) {
+
                 final double FREKUENSI_DEPRESI = Collections.frequency(WORD_DEPRESI, value);
                 final double FREKUENSI_SEDIH = Collections.frequency(WORD_SEDIH, value);
                 final double FREKUENSI_SENSITIF = Collections.frequency(WORD_SENSITIF, value);
                 final double FREKUENSI_LELAH = Collections.frequency(WORD_LELAH, value);
-                        
+
                 FREKUENSI.add(
-                    new FrekuensiModel(
-                        value,
-                        FREKUENSI_DEPRESI,
-                        FREKUENSI_SEDIH,
-                        FREKUENSI_SENSITIF,
-                        FREKUENSI_LELAH,
-                            
-                        (FREKUENSI_DEPRESI + 1) / (word.size() + Math.abs(WORD_DEPRESI.size())) ,
-                        (FREKUENSI_SEDIH + 1) / (word.size() + Math.abs(WORD_SEDIH.size())) ,
-                        (FREKUENSI_SENSITIF + 1) / (word.size() + Math.abs(WORD_SENSITIF.size())) ,
-                        (FREKUENSI_LELAH + 1) / (word.size() + Math.abs(WORD_LELAH.size()))
-                    )
+                        new FrekuensiModel(
+                                value,
+                                FREKUENSI_DEPRESI,
+                                FREKUENSI_SEDIH,
+                                FREKUENSI_SENSITIF,
+                                FREKUENSI_LELAH,
+                                (FREKUENSI_DEPRESI + 1) / (word.size() + Math.abs(WORD_DEPRESI.size())),
+                                (FREKUENSI_SEDIH + 1) / (word.size() + Math.abs(WORD_SEDIH.size())),
+                                (FREKUENSI_SENSITIF + 1) / (word.size() + Math.abs(WORD_SENSITIF.size())),
+                                (FREKUENSI_LELAH + 1) / (word.size() + Math.abs(WORD_LELAH.size()))
+                        )
                 );
             }
-            
-            
+
             final double[] COUNT = {
                 count_depresi / (double) KALIMAT.size(),
                 count_sedih / (double) KALIMAT.size(),
                 count_sensitif / (double) KALIMAT.size(),
                 count_lelah / (double) KALIMAT.size()
             };
-            
-            
+
             new DialogPrediksiBaru(this, true, "Prediksi Data Baru", FREKUENSI, COUNT).setVisible(true);
         } catch (SQLException e) {
             MSG.msgError("Error Prediksi Data : " + e.getMessage());
@@ -637,20 +620,20 @@ public class Dataset extends javax.swing.JFrame {
             final ResultSet RS = CON.selectAll("DATASET");
             List<String> word = new ArrayList<>();
             final List<String> KALIMAT = new ArrayList<>();
-            
+
             final List<String> WORD_DEPRESI = new ArrayList<>();
             final List<String> WORD_SEDIH = new ArrayList<>();
             final List<String> WORD_SENSITIF = new ArrayList<>();
             final List<String> WORD_LELAH = new ArrayList<>();
-            
+
             final List<FrekuensiModel> FREKUENSI = new ArrayList<>();
-            
+
             int count_depresi = 0, count_sedih = 0, count_sensitif = 0, count_lelah = 0;
 
             while (RS.next()) {
                 final String _KALIMAT = RS.getString("kalimat");
                 KALIMAT.add(_KALIMAT);
-                
+
                 final String[] TEMP = _KALIMAT.split(" ");
                 Collections.addAll(word, TEMP);
 
@@ -673,76 +656,75 @@ public class Dataset extends javax.swing.JFrame {
                         break;
                 }
             }
-            
+
             // Eliminasi kata yang sama
             word = word.stream().distinct().collect(Collectors.toList());
-                      
-            
-            for(String value : word) {
-                
+
+            for (String value : word) {
+
                 final double FREKUENSI_DEPRESI = Collections.frequency(WORD_DEPRESI, value);
                 final double FREKUENSI_SEDIH = Collections.frequency(WORD_SEDIH, value);
                 final double FREKUENSI_SENSITIF = Collections.frequency(WORD_SENSITIF, value);
                 final double FREKUENSI_LELAH = Collections.frequency(WORD_LELAH, value);
-                        
+
                 FREKUENSI.add(
-                    new FrekuensiModel(
-                        value,
-                        FREKUENSI_DEPRESI,
-                        FREKUENSI_SEDIH,
-                        FREKUENSI_SENSITIF,
-                        FREKUENSI_LELAH,
-                            
-                        (FREKUENSI_DEPRESI + 1) / (word.size() + Math.abs(WORD_DEPRESI.size())) ,
-                        (FREKUENSI_SEDIH + 1) / (word.size() + Math.abs(WORD_SEDIH.size())) ,
-                        (FREKUENSI_SENSITIF + 1) / (word.size() + Math.abs(WORD_SENSITIF.size())) ,
-                        (FREKUENSI_LELAH + 1) / (word.size() + Math.abs(WORD_LELAH.size()))
-                    )
+                        new FrekuensiModel(
+                                value,
+                                FREKUENSI_DEPRESI,
+                                FREKUENSI_SEDIH,
+                                FREKUENSI_SENSITIF,
+                                FREKUENSI_LELAH,
+                                (FREKUENSI_DEPRESI + 1) / (word.size() + Math.abs(WORD_DEPRESI.size())),
+                                (FREKUENSI_SEDIH + 1) / (word.size() + Math.abs(WORD_SEDIH.size())),
+                                (FREKUENSI_SENSITIF + 1) / (word.size() + Math.abs(WORD_SENSITIF.size())),
+                                (FREKUENSI_LELAH + 1) / (word.size() + Math.abs(WORD_LELAH.size()))
+                        )
                 );
             }
-            
-            
-            final int[] COUNT= new int[4];
-            
-            for(String value : KALIMAT) {
+
+            final int[] COUNT = new int[4];
+
+            for (String value : KALIMAT) {
                 final String[] KATA = value.split(" ");
-                
+
                 double product_depresi = count_depresi / (double) KALIMAT.size();
                 double product_sedih = count_sedih / (double) KALIMAT.size();
                 double product_sensitif = count_sensitif / (double) KALIMAT.size();
                 double product_lelah = count_lelah / (double) KALIMAT.size();
-                
-                for(String kata : KATA) {
+
+                for (String kata : KATA) {
                     final FrekuensiModel MODEL = getFrekuensiModel(FREKUENSI, kata);
                     product_depresi *= MODEL.getProb_depresi();
                     product_sedih *= MODEL.getProb_sedih();
                     product_sensitif *= MODEL.getProb_sensitif();
                     product_lelah *= MODEL.getProb_lelah();
                 }
-                
+
                 final double SUM_PRODUCT = product_depresi + product_lelah + product_sedih + product_sensitif;
-                
+
                 final double PREDICTED_DEPRESI = product_depresi / SUM_PRODUCT;
-                final double PREDICTED_SEDIH = product_sedih / SUM_PRODUCT; 
-                final double PREDICTED_SENSITIF = product_sensitif / SUM_PRODUCT; 
+                final double PREDICTED_SEDIH = product_sedih / SUM_PRODUCT;
+                final double PREDICTED_SENSITIF = product_sensitif / SUM_PRODUCT;
                 final double PREDICTED_LELAH = product_lelah / SUM_PRODUCT;
-                
+
                 final double MAX = Math.max(Math.max(PREDICTED_DEPRESI, PREDICTED_SEDIH), Math.max(PREDICTED_SENSITIF, PREDICTED_LELAH));
-                if(PREDICTED_DEPRESI == MAX) {
+                if (PREDICTED_DEPRESI == MAX) {
                     COUNT[0]++;
-                } else if(PREDICTED_SEDIH == MAX) {
+                } else if (PREDICTED_SEDIH == MAX) {
                     COUNT[1]++;
-                } else if(PREDICTED_SENSITIF == MAX) {
+                } else if (PREDICTED_SENSITIF == MAX) {
                     COUNT[2]++;
-                } else if(PREDICTED_LELAH == MAX) {
+                } else if (PREDICTED_LELAH == MAX) {
                     COUNT[3]++;
                 }
-               
+
             }
-            
-            
-            
-            new DialogAkurasiData(this, true, COUNT).setVisible(true);
+
+            new DialogAkurasiData(this, true, COUNT,
+                    new int[]{
+                        count_depresi, count_sedih, count_sensitif, count_lelah
+                    }
+            ).setVisible(true);
         } catch (SQLException e) {
             MSG.msgError("Error Akurasi Data : " + e.getMessage());
         }
