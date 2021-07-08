@@ -24,7 +24,7 @@ public class DialogPrediksiBaru extends javax.swing.JDialog {
         this.list = list;
         this.count = count;
         
-        this.list.add(new FrekuensiModel("", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//        this.list.add(new FrekuensiModel("", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     }
     
     private FrekuensiModel getFrekuensiModel(List<FrekuensiModel> model, String key) {
