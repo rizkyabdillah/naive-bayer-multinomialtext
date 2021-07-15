@@ -2,22 +2,109 @@ package FORM;
 
 public class DialogAkurasiData extends javax.swing.JDialog {
     
-    private int[] COUNT_PREDICT, COUNT_KALIMAT;
-    
+    private final int IN_DEPRESI = 0;
+    private final int IN_SEDIH = 1;
+    private final int IN_SENSITIF = 2;
+    private final int IN_LELAH = 3;
+        
     public DialogAkurasiData(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
     
-    public DialogAkurasiData(java.awt.Frame parent, boolean modal, int[] COUNT_PREDICT, int[] COUNT_KALIMAT) {
+    public DialogAkurasiData(java.awt.Frame parent, boolean modal, double[][] confusion_matrix, int[] count_kalimat) {
         super(parent, modal);
         initComponents();
         
-        this.COUNT_PREDICT = COUNT_PREDICT;
-        this.COUNT_KALIMAT = COUNT_KALIMAT;
+        final double accuracyDepresi = getAccuracy(confusion_matrix[IN_DEPRESI][IN_DEPRESI], count_kalimat[IN_DEPRESI]);
+        lbl_0_0.setText(String.format("%,.3f", accuracyDepresi));
+        
+        final double accuracySedih = getAccuracy(confusion_matrix[IN_SEDIH][IN_SEDIH], count_kalimat[IN_SEDIH]);
+        lbl_1_0.setText(String.format("%,.3f", accuracySedih));
+        
+        final double accuracySensitif = getAccuracy(confusion_matrix[IN_SENSITIF][IN_SENSITIF], count_kalimat[IN_SENSITIF]);
+        lbl_2_0.setText(String.format("%,.3f", accuracySensitif));
+        
+        final double accuracyLelah = getAccuracy(confusion_matrix[IN_LELAH][IN_LELAH], count_kalimat[IN_LELAH]);
+        lbl_3_0.setText(String.format("%,.3f", accuracyLelah));
+        
+        //==
+        
+        final double precisionDepresi = getPrecision(confusion_matrix, IN_DEPRESI);
+        lbl_0_1.setText(String.format("%,.3f", precisionDepresi));
+        
+        final double precisionSedih = getPrecision(confusion_matrix, IN_SEDIH);
+        lbl_1_1.setText(String.format("%,.3f", precisionSedih));
+        
+        final double precisionSensitif = getPrecision(confusion_matrix, IN_SENSITIF);
+        lbl_2_1.setText(String.format("%,.3f", precisionSensitif));
+        
+        final double precisionLelah = getPrecision(confusion_matrix, IN_LELAH);
+        lbl_3_1.setText(String.format("%,.3f", precisionLelah));
+        
+        //==
+        
+        final double recallDepresi = getRecall(confusion_matrix, IN_DEPRESI);
+        lbl_0_2.setText(String.format("%,.3f", recallDepresi));
+        
+        final double recallSedih = getRecall(confusion_matrix, IN_SEDIH);
+        lbl_1_2.setText(String.format("%,.3f", recallSedih));
+        
+        final double recallSensitif = getRecall(confusion_matrix, IN_SENSITIF);
+        lbl_2_2.setText(String.format("%,.3f", recallSensitif));
+        
+        final double recallLelah = getRecall(confusion_matrix, IN_LELAH);
+        lbl_3_2.setText(String.format("%,.3f", recallLelah));
+        
+        //==
+        
+        final double fMeasureDepresi = 2 * (precisionDepresi  * recallDepresi) / (precisionDepresi  + recallDepresi);
+        lbl_0_3.setText(String.format("%,.3f", fMeasureDepresi));
+        
+        final double fMeasureSedih = 2 * (precisionSedih  * recallSedih) / (precisionSedih  + recallSedih);
+        lbl_1_3.setText(String.format("%,.3f", fMeasureSedih));
+        
+        final double fMeasureSensitif = 2 * (precisionSensitif  * recallSensitif) / (precisionSensitif  + recallSensitif);
+        lbl_2_3.setText(String.format("%,.3f", fMeasureSensitif));
+        
+        final double fMeasureLelah = 2 * (precisionLelah  * recallLelah) / (precisionLelah  + recallLelah);
+        lbl_3_3.setText(String.format("%,.3f", fMeasureLelah));
+        
+        //==
+        
+        final double sumAccuracy = accuracyDepresi + accuracySedih + accuracySensitif + accuracyLelah;
+        lbl_accuracy.setText("ACCURACY : " + String.format("%,.2f%1s", sumAccuracy / 4 * 100, "%"));
+        
+        final double sumPrecision = precisionDepresi + precisionSedih + precisionSensitif + precisionLelah;
+        lbl_precission.setText("PRECISSION : " + String.format("%,.2f%1s", sumPrecision / 4 * 100, "%"));
+        
+        final double sumRecall = recallDepresi + recallSedih + recallSensitif + recallLelah;
+        lbl_recall.setText("RECALL : " + String.format("%,.2f%1s", sumRecall / 4 * 100, "%"));
+        
+        final double sumFMeasure = fMeasureDepresi + fMeasureSedih + fMeasureSensitif + fMeasureLelah;
+        lbl_fmeasure.setText("F-MEASURE : " + String.format("%,.2f%1s", sumFMeasure / 4 * 100, "%"));
+        
+    }
+    
+    private double getAccuracy(double nilaiPrediksi, double totalDiprediksi) {
+        return nilaiPrediksi / totalDiprediksi;
     }
 
+    private double getPrecision(double[][] confusion_matrix, int indexPrediction) {
+        double totalPrediction = 0;
+        for(double[] value : confusion_matrix) {
+            totalPrediction += value[indexPrediction];
+        }
+        return confusion_matrix[indexPrediction][indexPrediction] / totalPrediction;
+    }
     
+    private double getRecall(double[][] confusion_matrix, int indexPrediction) {
+        double totalPrediction = 0;
+        for(int i = 0; i < confusion_matrix[indexPrediction].length; i++) {
+            totalPrediction += confusion_matrix[indexPrediction][i];
+        }
+        return confusion_matrix[indexPrediction][indexPrediction] / totalPrediction;
+    }
     
     
     @SuppressWarnings("unchecked")
@@ -62,6 +149,7 @@ public class DialogAkurasiData extends javax.swing.JDialog {
         lbl_recall = new javax.swing.JLabel();
         lbl_fmeasure = new javax.swing.JLabel();
         jSeparator8 = new javax.swing.JSeparator();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Akurasi Data");
@@ -311,6 +399,10 @@ public class DialogAkurasiData extends javax.swing.JDialog {
         lbl_fmeasure.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         lbl_fmeasure.setOpaque(true);
 
+        jLabel6.setFont(new java.awt.Font("Lohit Devanagari", 1, 18)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("ACCURACY BY CLASS");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -391,11 +483,7 @@ public class DialogAkurasiData extends javax.swing.JDialog {
                         .addGap(160, 160, 160)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 790, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 8, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(0, 18, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -409,12 +497,20 @@ public class DialogAkurasiData extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbl_fmeasure, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pnlHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -502,10 +598,10 @@ public class DialogAkurasiData extends javax.swing.JDialog {
                     .addComponent(lbl_precission, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbl_recall, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbl_fmeasure, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        setSize(new java.awt.Dimension(818, 612));
+        setSize(new java.awt.Dimension(818, 679));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -543,6 +639,7 @@ public class DialogAkurasiData extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;

@@ -18,12 +18,12 @@ public class DialogFrekuensiKata1 extends javax.swing.JDialog {
         initComponents();
     }
     
-    public DialogFrekuensiKata1(java.awt.Frame parent, boolean modal, String title, List<FrekuensiModel> list) {
+    public DialogFrekuensiKata1(java.awt.Frame parent, boolean modal, String title, List<FrekuensiModel> list, int totalKata) {
         super(parent, modal);
         this.setTitle(title);
         initComponents();
         
-        boxTotal.setText("|  Total Kata : " + list.size() + "  |");
+        boxTotal.setText("|  Total Kata Unik : " + list.size() + "  |  Total Kata Semua : " + totalKata + "  |" );
         
         final String[] header = {
             "Nomor", "Kata Unik", "Depresi", "Sedih", "Sensitif", "Lelah"

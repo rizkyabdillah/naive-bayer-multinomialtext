@@ -5,45 +5,43 @@ import MODEL.FrekuensiModel;
 import java.util.List;
 
 public class DialogPrediksiBaru extends javax.swing.JDialog {
-    
+
     private final Message MSG = new Message();
     private List<FrekuensiModel> list;
     private double[] count;
-    
+
     public DialogPrediksiBaru(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
-    
+
     public DialogPrediksiBaru(java.awt.Frame parent, boolean modal, String title, List<FrekuensiModel> list, double[] count) {
         super(parent, modal);
-        
+
         this.setTitle(title);
         initComponents();
-        
+
         this.list = list;
         this.count = count;
-        
+
 //        this.list.add(new FrekuensiModel("", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     }
-    
+
     private FrekuensiModel getFrekuensiModel(List<FrekuensiModel> model, String key) {
         int index = 0;
-        for(int i = 0; i < model.size(); i++) {
-            if(model.get(i).getKata().equals(key)) {
+        for (int i = 0; i < model.size(); i++) {
+            if (model.get(i).getKata().equals(key)) {
                 index = i;
             }
         }
-        
-        if(index == 0) {
+
+        if (index == 0) {
             return null;
         }
-        
+
         return model.get(index);
     }
-    
-    
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -152,56 +150,61 @@ public class DialogPrediksiBaru extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void onHitungPrediksi(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onHitungPrediksi
-        if(boxKalimat.getText().isEmpty()) {
+        if (boxKalimat.getText().isEmpty()) {
             MSG.msgWarning("Mohon isi kolom kalimat!");
         } else {
             double product_depresi = count[0];
             double product_sedih = count[1];
             double product_sensitif = count[2];
             double product_lelah = count[3];
-            
+
             final String KALIMAT = boxKalimat.getText().replaceAll("[^\\dA-Za-z ]", " ").replaceAll("\\s{2,}", " ").toLowerCase();
             final String[] KATA = KALIMAT.split(" ");
 
-            for(String kata : KATA) {
+            for (String kata : KATA) {
                 final FrekuensiModel MODEL = getFrekuensiModel(list, kata);
-                if(MODEL != null) {
+                if (MODEL != null) {
                     product_depresi *= MODEL.getProb_depresi();
                     product_sedih *= MODEL.getProb_sedih();
                     product_sensitif *= MODEL.getProb_sensitif();
                     product_lelah *= MODEL.getProb_lelah();
                 }
+                System.out.println("Kata : " + kata + ", (" + MODEL.getProb_depresi() + "),(" + MODEL.getProb_sedih() + "),(" + MODEL.getProb_sensitif() + "),(" + MODEL.getProb_lelah() + ")");
             }
-            
+
+            System.out.println(String.format("%,.12f|%,.12f|%,.12f|%,.12f", product_depresi, product_sedih, product_sensitif, product_lelah));
+
             final double SUM_PRODUCT = product_depresi + product_lelah + product_sedih + product_sensitif;
-                
+
             final double PREDICTED_DEPRESI = product_depresi / SUM_PRODUCT;
-            final double PREDICTED_SEDIH = product_sedih / SUM_PRODUCT; 
-            final double PREDICTED_SENSITIF = product_sensitif / SUM_PRODUCT; 
+            final double PREDICTED_SEDIH = product_sedih / SUM_PRODUCT;
+            final double PREDICTED_SENSITIF = product_sensitif / SUM_PRODUCT;
             final double PREDICTED_LELAH = product_lelah / SUM_PRODUCT;
+
+            System.out.println(String.format("%,.12f", SUM_PRODUCT));
+            System.out.println(String.format("%,.5f|%,.5f|%,.5f|%,.5f", PREDICTED_DEPRESI, PREDICTED_SEDIH, PREDICTED_SENSITIF, PREDICTED_LELAH));
 
             final double MAX = Math.max(Math.max(PREDICTED_DEPRESI, PREDICTED_SEDIH), Math.max(PREDICTED_SENSITIF, PREDICTED_LELAH));
             String prediction = null;
-            
-            if(PREDICTED_DEPRESI == MAX) {
+
+            if (PREDICTED_DEPRESI == MAX) {
                 prediction = "DEPRESI";
-            } else if(PREDICTED_SEDIH == MAX) {
+            } else if (PREDICTED_SEDIH == MAX) {
                 prediction = "SEDIH";
-            } else if(PREDICTED_SENSITIF == MAX) {
+            } else if (PREDICTED_SENSITIF == MAX) {
                 prediction = "SENSITIF";
-            } else if(PREDICTED_LELAH == MAX) {
+            } else if (PREDICTED_LELAH == MAX) {
                 prediction = "LELAH";
             }
-            
+
             System.out.println(KALIMAT);
             textPrediksi.setText("PREDIKSI : " + prediction + " (" + String.format("%.3f", MAX) + ")");
         }
-        
+
     }//GEN-LAST:event_onHitungPrediksi
 
-    
     public static void main(String args[]) {
-        
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("GTK+".equals(info.getName())) {
@@ -212,7 +215,7 @@ public class DialogPrediksiBaru extends javax.swing.JDialog {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(DialogPrediksiBaru.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
+
         java.awt.EventQueue.invokeLater(() -> {
             DialogPrediksiBaru dialog = new DialogPrediksiBaru(new javax.swing.JFrame(), true);
             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
